@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SLA Executive Analytics - AWB Detail System</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --navy: #0f172a;
+            --blue-accent: #2563eb;
+            --border: #cbd5e1;
+            --bar-color: rgba(37, 99, 235, 0.12);
+        }
+
+        body { font-family: 'Inter', sans-serif; background-color: #f1f5f9; margin: 0; padding: 20px; color: var(--navy); }
+
+        .container { background: white; padding: 20px; border-radius: 8px; border: 1px solid var(--border); margin-bottom: 20px; }
+        .chip-group { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 15px; }
+        .chip { padding: 6px 14px; border-radius: 4px; border: 1px solid var(--border); background: #fff; font-size: 11px; font-weight: 700; cursor: pointer; }
+        .chip.active { background: var(--navy); color: white; border-color: var(--navy); }
+
+        #reportArea { background: white; padding: 40px; border-radius: 4px; width: fit-content; border: 1px solid var(--border); }
+        .report-header { margin-bottom: 25px; border-bottom: 3px solid var(--navy); padding-bottom: 10px; }
+        
+        table { border-collapse: collapse; width: auto; border: 2px solid var(--navy); }
+        th { background: var(--navy); color: white; padding: 14px 20px; font-size: 11px; font-weight: 800; text-transform: uppercase; border: 1px solid #334155; }
+        #subHeader th { background: #f8fafc; color: #475569; border: 1px solid var(--border); }
+
+        td { padding: 0; border: 1px solid var(--border); min-width: 85px; height: 45px; position: relative; cursor: pointer; }
+        .cell-wrapper { position: relative; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
+        .bar-visual { position: absolute; top: 0; left: 0; bottom: 0; z-index: 1; background: var(--bar-color); transition: width 0.4s ease; }
+        .value-text { position: relative; z-index: 10; font-size: 14px; font-weight: 800; color: var(--navy); text-shadow: 0 0 1px rgba(255,255,255,0.8); }
+
+        .zone-label { text-align: left !important; background: #fff !important; padding: 0 20px !important; font-weight: 800; color: var(--blue-accent); border-right: 2.5px solid var(--navy) !important; min-width: 160px; }
+        .total-cell { background: #f8fafc; border-left: 2.5px solid var(--navy) !important; }
+        .grand-total-row { background: var(--navy) !important; color: white !important; }
+        .grand-total-row td { color: white !important; border: 1px solid #334155; }
+
+        /* MODAL STYLE */
+        #awbModal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); align-items: center; justify-content: center; }
+        .modal-content { background: white; padding: 25px; border-radius: 12px; width: 400px; max-height: 80vh; overflow-y: auto; box-shadow: 0 20px 40px rgba(0,0,0,0.2); }
+        .modal-header { font-weight: 800; font-size: 16px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; }
+        .awb-list { background: #f1f5f9; padding: 10px; border-radius: 6px; font-family: monospace; font-size: 13px; line-height: 1.6; word-break: break-all; }
+        .btn-copy { background: var(--blue-accent); color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-weight: 700; margin-top: 15px; width: 100%; }
+
+        .btn-download { position: fixed; bottom: 30px; right: 30px; background: var(--navy); color: white; padding: 15px 30px; border-radius: 8px; border: none; font-weight: 800; cursor: pointer; box-shadow: 0 10px 25px rgba(0,0,0,0.15); z-index: 100; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div style="font-weight: 800; font-size: 18px; color: var(--navy);">SLA PERFORMANCE <span style="color: var(--blue-accent)">PRO</span></div>
+    <p style="font-size: 12px; color: #64748b; margin: 5px 0 15px;">Operational Analytics Dashboard • Staging Store BLHR0</p>
+    <input type="file" id="csvFile" accept=".csv" style="font-size: 12px;">
+    <div id="chipContainer" class="chip-group"></div>
+</div>
+
+<div id="reportArea">
+    <div class="report-header">
+        <h1>DELIVERY REPORT</h1>
+        <p id="reportTimestamp">Generated Data • Staging Intelligence System</p>
+    </div>
+    <table>
+        <thead>
+            <tr>
+                <th rowspan="2">UNIT ZONE</th>
+                <th id="opTitle">LAST OP CODE</th>
+                <th rowspan="2">TOTAL AWB</th>
+            </tr>
+            <tr id="subHeader"></tr>
+        </thead>
+        <tbody id="tableBody"></tbody>
+        <tfoot id="tableFoot"></tfoot>
+    </table>
+</div>
+
+<div id="awbModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <span id="modalTitle">AWB List</span>
+            <button onclick="closeModal()" style="border:none; background:none; cursor:pointer; font-weight:800;">✕</button>
+        </div>
+        <div id="awbDisplay" class="awb-list"></div>
+        <button class="btn-copy" onclick="copyAWB()">Copy All AWB</button>
+    </div>
+</div>
+
+<button class="btn-download" onclick="exportReport()">DOWNLOAD IMAGE REPORT</button>
+
+<script>
+    let rawData = [];
+    let kZ, kO, kA;
+
+    const now = new Date();
+    document.getElementById('reportTimestamp').innerText = `Operational Report • ${now.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })} • SS BLHR0`;
+
+    document.getElementById('csvFile').addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        Papa.parse(file, {
+            header: true, delimiter: "|", skipEmptyLines: true,
+            complete: function(res) {
+                rawData = res.data;
+                const keys = Object.keys(rawData[0]);
+                kZ = keys.find(k => k.toLowerCase().includes('dest_zone') || k.toLowerCase().includes('unitzone'));
+                kO = keys.find(k => k.toLowerCase().includes('last_op_status') || k.toLowerCase().includes('op_code'));
+                kA = keys.find(k => k.toLowerCase().includes('waybill_no') || k.toLowerCase().includes('resi') || k.toLowerCase().includes('awb'));
+
+                const ops = [...new Set(rawData.map(r => (r[kO] || "").trim()).filter(o => o))].sort();
+                document.getElementById('chipContainer').innerHTML = ops.map(o => `
+                    <div class="chip active" onclick="this.classList.toggle('active'); process();">${o}</div>
+                `).join('');
+                process();
+            }
+        });
+    });
+
+    function process() {
+        const activeOps = Array.from(document.querySelectorAll('.chip.active')).map(c => c.innerText);
+        const pivot = {};
+        const colTotals = {};
+        let grandTotalAll = 0;
+
+        rawData.forEach(r => {
+            const z = (r[kZ] || "").trim(), o = (r[kO] || "").trim(), awb = (r[kA] || "").trim();
+            if (z && activeOps.includes(o)) {
+                if (!pivot[z]) pivot[z] = { ops: {}, total: 0, awbs: {} };
+                if (!pivot[z].ops[o]) { pivot[z].ops[o] = 0; pivot[z].awbs[o] = []; }
+                
+                pivot[z].ops[o]++;
+                pivot[z].awbs[o].push(awb);
+                pivot[z].total++;
+                
+                colTotals[o] = (colTotals[o] || 0) + 1;
+                grandTotalAll++;
+            }
+        });
+        render(pivot, activeOps, colTotals, grandTotalAll);
+    }
+
+    function render(pivot, ops, colTotals, grandTotalAll) {
+        const zones = Object.keys(pivot).sort();
+        document.getElementById('opTitle').colSpan = ops.length;
+        document.getElementById('subHeader').innerHTML = ops.map(o => `<th>${o}</th>`).join('');
+
+        const colMax = {};
+        ops.forEach(op => { colMax[op] = Math.max(...zones.map(z => pivot[z].ops[op] || 0)); });
+        const grandMax = Math.max(...zones.map(z => pivot[z].total));
+
+        // Body
+        document.getElementById('tableBody').innerHTML = zones.map(z => {
+            const row = pivot[z];
+            let html = `<tr><td class="zone-label">${z}</td>`;
+            ops.forEach(op => {
+                const val = row.ops[op] || 0;
+                const awbString = (row.awbs[op] || []).join(', ');
+                const percent = colMax[op] > 0 ? (val / colMax[op] * 100) : 0;
+                html += `<td onclick="showAWB('${z} - ${op}', '${awbString}')">
+                    <div class="cell-wrapper">
+                        <div class="bar-visual" style="width: ${percent}%"></div>
+                        <span class="value-text">${val}</span>
+                    </div>
+                </td>`;
+            });
+            const allRowAWB = Object.values(row.awbs).flat().join(', ');
+            html += `<td class="total-cell" onclick="showAWB('${z} - TOTAL', '${allRowAWB}')">
+                <div class="cell-wrapper">
+                    <div class="bar-visual" style="width: ${(row.total/grandMax*100)}%; background:rgba(0,0,0,0.08)"></div>
+                    <span class="value-text">${row.total}</span>
+                </div>
+            </td></tr>`;
+            return html;
+        }).join('');
+
+        // Footer (Grand Total Row)
+        let footerHtml = `<tr class="grand-total-row"><td class="zone-label" style="background:var(--navy)!important; color:white!important;">GRAND TOTAL</td>`;
+        ops.forEach(op => {
+            footerHtml += `<td style="text-align:center; font-weight:800;">${colTotals[op] || 0}</td>`;
+        });
+        footerHtml += `<td style="text-align:center; font-weight:800; background:#334155;">${grandTotalAll}</td></tr>`;
+        document.getElementById('tableFoot').innerHTML = footerHtml;
+    }
+
+    function showAWB(title, awbs) {
+        if(!awbs) return;
+        document.getElementById('modalTitle').innerText = title;
+        document.getElementById('awbDisplay').innerText = awbs;
+        document.getElementById('awbModal').style.display = 'flex';
+    }
+
+    function closeModal() { document.getElementById('awbModal').style.display = 'none'; }
+
+    function copyAWB() {
+        const text = document.getElementById('awbDisplay').innerText;
+        navigator.clipboard.writeText(text);
+        alert('AWB Berhasil di-Copy!');
+    }
+
+    async function exportReport() {
+        const canvas = await html2canvas(document.getElementById('reportArea'), { scale: 3, backgroundColor: "#ffffff" });
+        const link = document.createElement('a');
+        link.download = `SLA_PRO_FULL_${new Date().getTime()}.jpg`;
+        link.href = canvas.toDataURL("image/jpeg", 0.98);
+        link.click();
+    }
+</script>
+</body>
+</html>

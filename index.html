@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SLA Executive Analytics - AWB Detail System</title>
+    <title>SLA Executive Analytics - Ultra HD Version</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
@@ -12,57 +12,101 @@
             --navy: #0f172a;
             --blue-accent: #2563eb;
             --border: #cbd5e1;
-            --bar-color: rgba(37, 99, 235, 0.12);
+            --bar-color: rgba(37, 99, 235, 0.15);
+        }
+
+        /* Menajamkan Font untuk Render Gambar */
+        * { 
+            -webkit-font-smoothing: antialiased; 
+            -moz-osx-font-smoothing: grayscale; 
+            text-rendering: optimizeLegibility;
         }
 
         body { font-family: 'Inter', sans-serif; background-color: #f1f5f9; margin: 0; padding: 20px; color: var(--navy); }
 
-        .container { background: white; padding: 20px; border-radius: 8px; border: 1px solid var(--border); margin-bottom: 20px; }
+        .controls { background: white; padding: 20px; border-radius: 8px; border: 1px solid var(--border); margin-bottom: 20px; }
         .chip-group { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 15px; }
         .chip { padding: 6px 14px; border-radius: 4px; border: 1px solid var(--border); background: #fff; font-size: 11px; font-weight: 700; cursor: pointer; }
         .chip.active { background: var(--navy); color: white; border-color: var(--navy); }
 
-        #reportArea { background: white; padding: 40px; border-radius: 4px; width: fit-content; border: 1px solid var(--border); }
-        .report-header { margin-bottom: 25px; border-bottom: 3px solid var(--navy); padding-bottom: 10px; }
+        /* AREA REPORT (ULTRA HD CONTAINER) */
+        #reportArea { 
+            background: white; 
+            padding: 50px; 
+            border-radius: 0; 
+            width: fit-content; 
+            border: 1px solid #e2e8f0;
+        }
         
-        table { border-collapse: collapse; width: auto; border: 2px solid var(--navy); }
-        th { background: var(--navy); color: white; padding: 14px 20px; font-size: 11px; font-weight: 800; text-transform: uppercase; border: 1px solid #334155; }
-        #subHeader th { background: #f8fafc; color: #475569; border: 1px solid var(--border); }
+        .report-header { margin-bottom: 30px; border-bottom: 4px solid var(--navy); padding-bottom: 15px; }
+        .report-header h1 { margin: 0; font-size: 32px; font-weight: 800; letter-spacing: -1px; }
+        
+        table { border-collapse: collapse; width: auto; border: 3px solid var(--navy); margin-bottom: 35px; background: white; }
+        
+        /* HEADER BESAR & TAJAM */
+        th { 
+            background: var(--navy); 
+            color: white; 
+            padding: 22px 30px; 
+            font-size: 18px; 
+            font-weight: 800; 
+            text-transform: uppercase; 
+            border: 1.5px solid #1e293b; 
+            letter-spacing: 1px;
+        }
+        
+        #subHeader th { 
+            background: #f1f5f9; 
+            color: #334155; 
+            border: 1px solid var(--border); 
+            font-size: 15px; 
+            padding: 12px;
+            font-weight: 700;
+        }
 
-        td { padding: 0; border: 1px solid var(--border); min-width: 85px; height: 45px; position: relative; cursor: pointer; }
+        td { border: 1px solid var(--border); min-width: 100px; height: 55px; position: relative; cursor: pointer; }
         .cell-wrapper { position: relative; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
-        .bar-visual { position: absolute; top: 0; left: 0; bottom: 0; z-index: 1; background: var(--bar-color); transition: width 0.4s ease; }
-        .value-text { position: relative; z-index: 10; font-size: 14px; font-weight: 800; color: var(--navy); text-shadow: 0 0 1px rgba(255,255,255,0.8); }
+        .bar-visual { position: absolute; top: 0; left: 0; bottom: 0; z-index: 1; background: var(--bar-color); }
+        .value-text { position: relative; z-index: 10; font-size: 16px; font-weight: 800; color: var(--navy); }
 
-        .zone-label { text-align: left !important; background: #fff !important; padding: 0 20px !important; font-weight: 800; color: var(--blue-accent); border-right: 2.5px solid var(--navy) !important; min-width: 160px; }
-        .total-cell { background: #f8fafc; border-left: 2.5px solid var(--navy) !important; }
+        .zone-label { text-align: left !important; background: #fff !important; padding: 0 25px !important; font-weight: 800; color: var(--blue-accent); border-right: 3px solid var(--navy) !important; min-width: 200px; font-size: 15px; }
+        .total-cell { background: #f8fafc; border-left: 3px solid var(--navy) !important; }
+        
         .grand-total-row { background: var(--navy) !important; color: white !important; }
-        .grand-total-row td { color: white !important; border: 1px solid #334155; }
+        .grand-total-row td { color: white !important; font-weight: 800; text-align: center; height: 65px; font-size: 18px; border: 1.5px solid #1e293b; }
 
-        /* MODAL STYLE */
-        #awbModal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); align-items: center; justify-content: center; }
-        .modal-content { background: white; padding: 25px; border-radius: 12px; width: 400px; max-height: 80vh; overflow-y: auto; box-shadow: 0 20px 40px rgba(0,0,0,0.2); }
-        .modal-header { font-weight: 800; font-size: 16px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; }
-        .awb-list { background: #f1f5f9; padding: 10px; border-radius: 6px; font-family: monospace; font-size: 13px; line-height: 1.6; word-break: break-all; }
-        .btn-copy { background: var(--blue-accent); color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-weight: 700; margin-top: 15px; width: 100%; }
+        /* FOOTER ANALYSIS */
+        .footer-analysis { margin-top: 40px; display: flex; flex-direction: column; gap: 25px; width: 100%; }
+        .analysis-section-title { font-weight: 800; font-size: 16px; text-transform: uppercase; color: var(--navy); border-left: 6px solid var(--blue-accent); padding-left: 12px; margin-bottom: 15px; }
+        .top-zones-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
+        .top-card { padding: 15px; border: 1.5px solid var(--border); border-radius: 8px; background: #f8fafc; }
+        .top-card strong { font-size: 15px; color: var(--blue-accent); display: block; margin: 4px 0; }
+        .legend-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; background: #fff; padding: 20px; border: 1.5px solid var(--border); border-radius: 8px; }
+        .legend-item { font-size: 13px; color: #1e293b; line-height: 1.5; }
 
-        .btn-download { position: fixed; bottom: 30px; right: 30px; background: var(--navy); color: white; padding: 15px 30px; border-radius: 8px; border: none; font-weight: 800; cursor: pointer; box-shadow: 0 10px 25px rgba(0,0,0,0.15); z-index: 100; }
+        /* MODAL */
+        #awbModal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); align-items: center; justify-content: center; }
+        .modal-content { background: white; padding: 30px; border-radius: 12px; width: 500px; max-height: 80vh; overflow-y: auto; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); }
+        
+        .btn-download { position: fixed; bottom: 30px; right: 30px; background: var(--blue-accent); color: white; padding: 18px 35px; border-radius: 12px; border: none; font-weight: 800; cursor: pointer; box-shadow: 0 10px 30px rgba(37, 99, 235, 0.4); z-index: 100; font-size: 14px; transition: 0.3s; }
+        .btn-download:hover { transform: translateY(-3px); background: var(--navy); }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <div style="font-weight: 800; font-size: 18px; color: var(--navy);">SLA PERFORMANCE <span style="color: var(--blue-accent)">PRO</span></div>
-    <p style="font-size: 12px; color: #64748b; margin: 5px 0 15px;">Operational Analytics Dashboard • Staging Store BLHR0</p>
-    <input type="file" id="csvFile" accept=".csv" style="font-size: 12px;">
+<div class="controls">
+    <div style="font-weight: 800; font-size: 20px; color: var(--navy);">SLA PERFORMANCE <span style="color: var(--blue-accent)">BLHR00</span></div>
+    <p style="font-size: 13px; color: #64748b; margin: 5px 0 15px;">Operational Dashboard High-Definition</p>
+    <input type="file" id="csvFile" accept=".csv">
     <div id="chipContainer" class="chip-group"></div>
 </div>
 
 <div id="reportArea">
     <div class="report-header">
-        <h1>DELIVERY REPORT</h1>
-        <p id="reportTimestamp">Generated Data • Staging Intelligence System</p>
+        <h1>DELIVERY PERFORMANCE REPORT</h1>
+        <p id="reportTimestamp" style="font-weight:700; color:#64748b; font-size: 14px;"></p>
     </div>
+
     <table>
         <thead>
             <tr>
@@ -75,31 +119,60 @@
         <tbody id="tableBody"></tbody>
         <tfoot id="tableFoot"></tfoot>
     </table>
+
+    <div class="footer-analysis">
+        <div>
+            <div class="analysis-section-title">Top Performance Analysis</div>
+            <div id="topZonesContainer" class="top-zones-grid"></div>
+        </div>
+        <div>
+            <div class="analysis-section-title">Op Code Dictionary (Keterangan)</div>
+            <div id="legendContainer" class="legend-grid"></div>
+        </div>
+    </div>
 </div>
 
 <div id="awbModal">
     <div class="modal-content">
-        <div class="modal-header">
-            <span id="modalTitle">AWB List</span>
-            <button onclick="closeModal()" style="border:none; background:none; cursor:pointer; font-weight:800;">✕</button>
-        </div>
-        <div id="awbDisplay" class="awb-list"></div>
-        <button class="btn-copy" onclick="copyAWB()">Copy All AWB</button>
+        <div id="modalTitle" style="font-weight:800; font-size:18px;">AWB List</div>
+        <div id="modalOpDesc" style="font-size:14px; color:var(--blue-accent); margin-bottom:15px; font-weight: 600;"></div>
+        <div id="awbDisplay" style="background:#f1f5f9; padding:15px; border-radius:8px; font-family:monospace; font-size:14px; border:1px solid #cbd5e1; word-break:break-all;"></div>
+        <button onclick="copyAWB()" style="width:100%; padding:15px; background:var(--blue-accent); color:white; border:none; border-radius:8px; margin-top:15px; font-weight:800; cursor:pointer;">COPY ALL AWB</button>
+        <button onclick="closeModal()" style="width:100%; padding:10px; background:#f1f5f9; border:none; border-radius:8px; margin-top:8px; cursor:pointer; font-weight:600;">Close</button>
     </div>
 </div>
 
-<button class="btn-download" onclick="exportReport()">DOWNLOAD IMAGE REPORT</button>
+<button class="btn-download" onclick="exportReport()">DOWNLOAD ULTRA HD REPORT (.JPG)</button>
 
 <script>
+    const OP_MAP = {
+        "78": "Parcel successfully sent to SmartBox", "99": "Pengirim ingin parcel dropoff", "20": "Bagging", "620": "Put in bag",
+        "206": "SP to external wait for response", "207": "SP to external rejected", "208": "SP to external success",
+        "97": "Permintaan Pickup", "110": "Re-Weight", "603n": "Sorting", "21n": "Bagging", "618n": "Put in bag",
+        "22n": "Remove from bag", "643": "WH to external success", "91": "Action from ARSS", "59": "Drop Off (MAA)",
+        "619": "Passthrough", "93": "ICS PreShipping Exception", "641": "WH to external wait for response",
+        "642": "WH to external rejected", "35": "Transfer Between Vehicles", "36": "lock vehicle", "37": "unlock vehicle",
+        "94": "ICS Shipping Exception", "41": "ICS Inbound City Destination", "42": "ICS Inbound Return", "44": "External to WH",
+        "82": "ICS Shipping Confirmed", "83": "ICS Shipping Delivered", "14": "ARSS receive problem task",
+        "15": "ARSS solve problem task", "49": "Satria Collection Bulky Parcel at Shipper Site", "98": "Request Pickup",
+        "100": "New Pickup Task", "54": "Collected from Shipper", "101": "Claim Pickup", "60": "Pickup Exception",
+        "102": "Handover pickup parcel from satria", "50": "Satria to Staging", "51": "Satria to Staging (Multi-colli)",
+        "40": "One Click Pickup", "407": "Staging to Rider", "43": "Rider to Hub", "603": "Sorting", "21": "Bagging",
+        "618": "Put in bag", "22": "Remove from bag", "30": "Load to truck", "31": "Unload from truck", "640": "Hub to Rider",
+        "33": "Hold Up", "47": "Rider to Staging", "204": "Staging to Satria", "205": "Claim Delivery", "80": "Delivery Completed",
+        "70": "Delivery Exception", "55": "Returned to Shipper", "90": "Cancel Order", "92": "Action from CS (CMS)",
+        "81": "Delivered to external", "57": "Parcel reture, handover from satria to staging", "209": "Hub to Satria",
+        "45": "Satria to Hub", "65": "SGS clear pickup task", "56": "Collect and pickup parcel from Mitra Anteraja",
+        "210": "Claim Delivery (Satria Non COD)", "201": "Request order to external logistic", "96": "Order Non Request Pickup"
+    };
+
     let rawData = [];
     let kZ, kO, kA;
 
-    const now = new Date();
-    document.getElementById('reportTimestamp').innerText = `Operational Report • ${now.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })} • SS BLHR0`;
+    document.getElementById('reportTimestamp').innerText = `Report Date: ${new Date().toLocaleDateString('id-ID', {day:'numeric', month:'long', year:'numeric'})} • SS BLHR0`;
 
     document.getElementById('csvFile').addEventListener('change', function(e) {
-        const file = e.target.files[0];
-        Papa.parse(file, {
+        Papa.parse(e.target.files[0], {
             header: true, delimiter: "|", skipEmptyLines: true,
             complete: function(res) {
                 rawData = res.data;
@@ -121,89 +194,95 @@
         const activeOps = Array.from(document.querySelectorAll('.chip.active')).map(c => c.innerText);
         const pivot = {};
         const colTotals = {};
-        let grandTotalAll = 0;
+        const topZones = {};
 
         rawData.forEach(r => {
             const z = (r[kZ] || "").trim(), o = (r[kO] || "").trim(), awb = (r[kA] || "").trim();
             if (z && activeOps.includes(o)) {
                 if (!pivot[z]) pivot[z] = { ops: {}, total: 0, awbs: {} };
                 if (!pivot[z].ops[o]) { pivot[z].ops[o] = 0; pivot[z].awbs[o] = []; }
-                
                 pivot[z].ops[o]++;
                 pivot[z].awbs[o].push(awb);
                 pivot[z].total++;
-                
                 colTotals[o] = (colTotals[o] || 0) + 1;
-                grandTotalAll++;
+                if(!topZones[o] || pivot[z].ops[o] > topZones[o].val) topZones[o] = { zone: z, val: pivot[z].ops[o] };
             }
         });
-        render(pivot, activeOps, colTotals, grandTotalAll);
+        render(pivot, activeOps, colTotals, topZones);
     }
 
-    function render(pivot, ops, colTotals, grandTotalAll) {
+    function render(pivot, ops, colTotals, topZones) {
         const zones = Object.keys(pivot).sort();
         document.getElementById('opTitle').colSpan = ops.length;
         document.getElementById('subHeader').innerHTML = ops.map(o => `<th>${o}</th>`).join('');
 
         const colMax = {};
-        ops.forEach(op => { colMax[op] = Math.max(...zones.map(z => pivot[z].ops[op] || 0)); });
+        ops.forEach(op => colMax[op] = Math.max(...zones.map(z => pivot[z].ops[op] || 0)));
         const grandMax = Math.max(...zones.map(z => pivot[z].total));
 
-        // Body
         document.getElementById('tableBody').innerHTML = zones.map(z => {
             const row = pivot[z];
             let html = `<tr><td class="zone-label">${z}</td>`;
             ops.forEach(op => {
                 const val = row.ops[op] || 0;
-                const awbString = (row.awbs[op] || []).join(', ');
                 const percent = colMax[op] > 0 ? (val / colMax[op] * 100) : 0;
-                html += `<td onclick="showAWB('${z} - ${op}', '${awbString}')">
-                    <div class="cell-wrapper">
-                        <div class="bar-visual" style="width: ${percent}%"></div>
-                        <span class="value-text">${val}</span>
-                    </div>
+                html += `<td onclick="showAWB('${z}', '${op}', '${(row.awbs[op] || []).join(', ')}')">
+                    <div class="cell-wrapper"><div class="bar-visual" style="width:${percent}%"></div><span class="value-text">${val}</span></div>
                 </td>`;
             });
-            const allRowAWB = Object.values(row.awbs).flat().join(', ');
-            html += `<td class="total-cell" onclick="showAWB('${z} - TOTAL', '${allRowAWB}')">
-                <div class="cell-wrapper">
-                    <div class="bar-visual" style="width: ${(row.total/grandMax*100)}%; background:rgba(0,0,0,0.08)"></div>
-                    <span class="value-text">${row.total}</span>
-                </div>
+            html += `<td class="total-cell" onclick="showAWB('${z}', 'TOTAL', '${Object.values(row.awbs).flat().join(', ')}')">
+                <div class="cell-wrapper"><div class="bar-visual" style="width:${(row.total/grandMax*100)}%; background:rgba(0,0,0,0.08)"></div><span class="value-text">${row.total}</span></div>
             </td></tr>`;
             return html;
         }).join('');
 
-        // Footer (Grand Total Row)
-        let footerHtml = `<tr class="grand-total-row"><td class="zone-label" style="background:var(--navy)!important; color:white!important;">GRAND TOTAL</td>`;
-        ops.forEach(op => {
-            footerHtml += `<td style="text-align:center; font-weight:800;">${colTotals[op] || 0}</td>`;
-        });
-        footerHtml += `<td style="text-align:center; font-weight:800; background:#334155;">${grandTotalAll}</td></tr>`;
+        let grandTotalAll = Object.values(colTotals).reduce((a, b) => a + b, 0);
+        let footerHtml = `<tr class="grand-total-row"><td>GRAND TOTAL</td>`;
+        ops.forEach(op => footerHtml += `<td>${colTotals[op] || 0}</td>`);
+        footerHtml += `<td style="background:#1e293b!important;">${grandTotalAll}</td></tr>`;
         document.getElementById('tableFoot').innerHTML = footerHtml;
+
+        document.getElementById('topZonesContainer').innerHTML = ops.map(o => `
+            <div class="top-card">
+                <small style="font-weight:800; color:#64748b;">TOP ${o}</small>
+                <strong>${topZones[o]?.zone || '-'}</strong>
+                <span style="font-size:11px; font-weight:600;">${topZones[o]?.val || 0} AWB • ${OP_MAP[o] || ''}</span>
+            </div>
+        `).join('');
+
+        document.getElementById('legendContainer').innerHTML = ops.map(o => `
+            <div class="legend-item"><b>${o}:</b> ${OP_MAP[o] || 'Code Unknown'}</div>
+        `).join('');
     }
 
-    function showAWB(title, awbs) {
+    function showAWB(zone, op, awbs) {
         if(!awbs) return;
-        document.getElementById('modalTitle').innerText = title;
+        document.getElementById('modalTitle').innerText = `${zone} - [${op}]`;
+        document.getElementById('modalOpDesc').innerText = OP_MAP[op] || 'Operational Status';
         document.getElementById('awbDisplay').innerText = awbs;
         document.getElementById('awbModal').style.display = 'flex';
     }
-
     function closeModal() { document.getElementById('awbModal').style.display = 'none'; }
+    function copyAWB() { navigator.clipboard.writeText(document.getElementById('awbDisplay').innerText); alert('Copied!'); }
 
-    function copyAWB() {
-        const text = document.getElementById('awbDisplay').innerText;
-        navigator.clipboard.writeText(text);
-        alert('AWB Berhasil di-Copy!');
-    }
-
+    // FUNGSI EXPORT DENGAN SKALA 4 (ULTRA HD)
     async function exportReport() {
-        const canvas = await html2canvas(document.getElementById('reportArea'), { scale: 3, backgroundColor: "#ffffff" });
+        const btn = document.querySelector('.btn-download');
+        btn.innerText = "Processing Ultra HD...";
+        
+        const canvas = await html2canvas(document.getElementById('reportArea'), { 
+            scale: 4,               // Menaikkan resolusi 4x lipat
+            useCORS: true, 
+            logging: false,
+            backgroundColor: "#ffffff"
+        });
+        
         const link = document.createElement('a');
-        link.download = `SLA_PRO_FULL_${new Date().getTime()}.jpg`;
-        link.href = canvas.toDataURL("image/jpeg", 0.98);
+        link.download = `SLA_ULTRA_HD_${new Date().getTime()}.jpg`;
+        link.href = canvas.toDataURL("image/jpeg", 1.0); // Kualitas JPEG Maksimal (1.0)
         link.click();
+        
+        btn.innerText = "DOWNLOAD ULTRA HD REPORT (.JPG)";
     }
 </script>
 </body>

@@ -12,7 +12,12 @@
             --navy: #0f172a;
             --blue-accent: #2563eb;
             --border: #cbd5e1;
+            /* Border luar tabel & elemen utama dibuat lebih tebal & gelap */
+            --border-heavy: #1e293b; 
             --bar-color: rgba(37, 99, 235, 0.15);
+            /* Variabel untuk radius sudut tumpul */
+            --radius-md: 8px;
+            --radius-lg: 12px;
         }
 
         /* Menajamkan Font untuk Render Gambar */
@@ -20,11 +25,12 @@
             -webkit-font-smoothing: antialiased; 
             -moz-osx-font-smoothing: grayscale; 
             text-rendering: optimizeLegibility;
+            box-sizing: border-box;
         }
 
         body { font-family: 'Inter', sans-serif; background-color: #f1f5f9; margin: 0; padding: 20px; color: var(--navy); }
 
-        .controls { background: white; padding: 20px; border-radius: 8px; border: 1px solid var(--border); margin-bottom: 20px; }
+        .controls { background: white; padding: 20px; border-radius: var(--radius-md); border: 1px solid var(--border); margin-bottom: 20px; }
         .chip-group { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 15px; }
         .chip { padding: 6px 14px; border-radius: 4px; border: 1px solid var(--border); background: #fff; font-size: 11px; font-weight: 700; cursor: pointer; }
         .chip.active { background: var(--navy); color: white; border-color: var(--navy); }
@@ -33,17 +39,31 @@
         #reportArea { 
             background: white; 
             padding: 50px; 
-            border-radius: 0; 
+            /* Sudut tumpul pada container utama */
+            border-radius: var(--radius-lg); 
             width: fit-content; 
             border: 1px solid #e2e8f0;
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
         }
-        
+
         .report-header { margin-bottom: 30px; border-bottom: 4px solid var(--navy); padding-bottom: 15px; }
         .report-header h1 { margin: 0; font-size: 32px; font-weight: 800; letter-spacing: -1px; }
-        
-        table { border-collapse: collapse; width: auto; border: 3px solid var(--navy); margin-bottom: 35px; background: white; }
-        
-        /* HEADER BESAR & TAJAM */
+
+        /* --- UPDATE TABEL: BORDER LEBIH KELIATAN & SUDUT TUMPUL --- */
+        table { 
+            border-collapse: separate; /* Mengubah ke separate agar border-radius berfungsi */
+            border-spacing: 0;
+            width: auto; 
+            /* Border luar tabel dibuat sangat tebal (4px) */
+            border: 4px solid var(--border-heavy); 
+            margin-bottom: 35px; 
+            background: white; 
+            /* Sudut tumpul tabel */
+            border-radius: var(--radius-lg); 
+            overflow: hidden; /* Memastikan isi tabel mengikuti sudut tumpul */
+        }
+
+        /* HEADER BESAR, TAJAM, & BORDER TEGAS */
         th { 
             background: var(--navy); 
             color: white; 
@@ -51,44 +71,102 @@
             font-size: 18px; 
             font-weight: 800; 
             text-transform: uppercase; 
-            border: 1.5px solid #1e293b; 
+            /* Border antar header dipertegas (2px) */
+            border-right: 2px solid rgba(255,255,255,0.15); 
+            border-bottom: 2px solid var(--border-heavy);
             letter-spacing: 1px;
         }
         
+        /* Menghilangkan border kanan pada th terakhir */
+        th:last-child { border-right: none; }
+
         #subHeader th { 
             background: #f1f5f9; 
             color: #334155; 
-            border: 1px solid var(--border); 
+            border-right: 1px solid var(--border); 
+            border-bottom: 2px solid var(--border-heavy);
             font-size: 15px; 
             padding: 12px;
             font-weight: 700;
         }
 
-        td { border: 1px solid var(--border); min-width: 100px; height: 55px; position: relative; cursor: pointer; }
+        td { 
+            border-right: 1px solid var(--border); 
+            border-bottom: 1px solid var(--border); 
+            min-width: 100px; 
+            height: 55px; 
+            position: relative; 
+            cursor: pointer; 
+        }
+
         .cell-wrapper { position: relative; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
         .bar-visual { position: absolute; top: 0; left: 0; bottom: 0; z-index: 1; background: var(--bar-color); }
         .value-text { position: relative; z-index: 10; font-size: 16px; font-weight: 800; color: var(--navy); }
 
-        .zone-label { text-align: left !important; background: #fff !important; padding: 0 25px !important; font-weight: 800; color: var(--blue-accent); border-right: 3px solid var(--navy) !important; min-width: 200px; font-size: 15px; }
-        .total-cell { background: #f8fafc; border-left: 3px solid var(--navy) !important; }
+        .zone-label { 
+            text-align: left !important; 
+            background: #fff !important; 
+            padding: 0 25px !important; 
+            font-weight: 800; 
+            color: var(--blue-accent); 
+            /* Border pemisah kolom Zone dipertebal (3px) */
+            border-right: 3px solid var(--border-heavy) !important; 
+            min-width: 200px; 
+            font-size: 15px; 
+        }
         
+        .total-cell { 
+            background: #f8fafc; 
+            /* Border pemisah kolom Total dipertebal (3px) */
+            border-left: 3px solid var(--border-heavy) !important; 
+        }
+
         .grand-total-row { background: var(--navy) !important; color: white !important; }
-        .grand-total-row td { color: white !important; font-weight: 800; text-align: center; height: 65px; font-size: 18px; border: 1.5px solid #1e293b; }
+        .grand-total-row td { 
+            color: white !important; 
+            font-weight: 800; 
+            text-align: center; 
+            height: 65px; 
+            font-size: 18px; 
+            /* Border pada tfoot dipertebal */
+            border-right: 2px solid rgba(255,255,255,0.15); 
+            border-top: 2px solid var(--border-heavy);
+            border-bottom: none;
+        }
+        .grand-total-row td:last-child { border-right: none; }
 
         /* FOOTER ANALYSIS */
         .footer-analysis { margin-top: 40px; display: flex; flex-direction: column; gap: 25px; width: 100%; }
         .analysis-section-title { font-weight: 800; font-size: 16px; text-transform: uppercase; color: var(--navy); border-left: 6px solid var(--blue-accent); padding-left: 12px; margin-bottom: 15px; }
+        
         .top-zones-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
-        .top-card { padding: 15px; border: 1.5px solid var(--border); border-radius: 8px; background: #f8fafc; }
+        
+        /* UPDATE KARTU: BORDER LEBIH TEBAL & SUDUT TUMPUL */
+        .top-card { 
+            padding: 18px; 
+            border: 2px solid var(--border-heavy); /* Border dipertebal & digelapkan */
+            border-radius: var(--radius-md); /* Sudut tumpul */
+            background: #f8fafc; 
+        }
         .top-card strong { font-size: 15px; color: var(--blue-accent); display: block; margin: 4px 0; }
-        .legend-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; background: #fff; padding: 20px; border: 1.5px solid var(--border); border-radius: 8px; }
+        
+        /* UPDATE LEGEND: BORDER LEBIH TEBAL & SUDUT TUMPUL */
+        .legend-grid { 
+            display: grid; 
+            grid-template-columns: repeat(2, 1fr); 
+            gap: 8px; 
+            background: #fff; 
+            padding: 20px; 
+            border: 2px solid var(--border-heavy); /* Border dipertebal & digelapkan */
+            border-radius: var(--radius-md); /* Sudut tumpul */
+        }
         .legend-item { font-size: 13px; color: #1e293b; line-height: 1.5; }
 
         /* MODAL */
         #awbModal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); align-items: center; justify-content: center; }
-        .modal-content { background: white; padding: 30px; border-radius: 12px; width: 500px; max-height: 80vh; overflow-y: auto; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); }
-        
-        .btn-download { position: fixed; bottom: 30px; right: 30px; background: var(--blue-accent); color: white; padding: 18px 35px; border-radius: 12px; border: none; font-weight: 800; cursor: pointer; box-shadow: 0 10px 30px rgba(37, 99, 235, 0.4); z-index: 100; font-size: 14px; transition: 0.3s; }
+        .modal-content { background: white; padding: 30px; border-radius: var(--radius-lg); width: 500px; max-height: 80vh; overflow-y: auto; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); }
+
+        .btn-download { position: fixed; bottom: 30px; right: 30px; background: var(--blue-accent); color: white; padding: 18px 35px; border-radius: var(--radius-lg); border: none; font-weight: 800; cursor: pointer; box-shadow: 0 10px 30px rgba(37, 99, 235, 0.4); z-index: 100; font-size: 14px; transition: 0.3s; }
         .btn-download:hover { transform: translateY(-3px); background: var(--navy); }
     </style>
 </head>
@@ -136,9 +214,9 @@
     <div class="modal-content">
         <div id="modalTitle" style="font-weight:800; font-size:18px;">AWB List</div>
         <div id="modalOpDesc" style="font-size:14px; color:var(--blue-accent); margin-bottom:15px; font-weight: 600;"></div>
-        <div id="awbDisplay" style="background:#f1f5f9; padding:15px; border-radius:8px; font-family:monospace; font-size:14px; border:1px solid #cbd5e1; word-break:break-all;"></div>
-        <button onclick="copyAWB()" style="width:100%; padding:15px; background:var(--blue-accent); color:white; border:none; border-radius:8px; margin-top:15px; font-weight:800; cursor:pointer;">COPY ALL AWB</button>
-        <button onclick="closeModal()" style="width:100%; padding:10px; background:#f1f5f9; border:none; border-radius:8px; margin-top:8px; cursor:pointer; font-weight:600;">Close</button>
+        <div id="awbDisplay" style="background:#f1f5f9; padding:15px; border-radius:var(--radius-md); font-family:monospace; font-size:14px; border:1px solid #cbd5e1; word-break:break-all;"></div>
+        <button onclick="copyAWB()" style="width:100%; padding:15px; background:var(--blue-accent); color:white; border:none; border-radius:var(--radius-md); margin-top:15px; font-weight:800; cursor:pointer;">COPY ALL AWB</button>
+        <button onclick="closeModal()" style="width:100%; padding:10px; background:#f1f5f9; border:none; border-radius:var(--radius-md); margin-top:8px; cursor:pointer; font-weight:600;">Close</button>
     </div>
 </div>
 
@@ -239,7 +317,7 @@
         let grandTotalAll = Object.values(colTotals).reduce((a, b) => a + b, 0);
         let footerHtml = `<tr class="grand-total-row"><td>GRAND TOTAL</td>`;
         ops.forEach(op => footerHtml += `<td>${colTotals[op] || 0}</td>`);
-        footerHtml += `<td style="background:#1e293b!important;">${grandTotalAll}</td></tr>`;
+        footerHtml += `<td style="background:#1e293b!important; border-left: 3px solid var(--border-heavy);">${grandTotalAll}</td></tr>`;
         document.getElementById('tableFoot').innerHTML = footerHtml;
 
         document.getElementById('topZonesContainer').innerHTML = ops.map(o => `
@@ -265,23 +343,23 @@
     function closeModal() { document.getElementById('awbModal').style.display = 'none'; }
     function copyAWB() { navigator.clipboard.writeText(document.getElementById('awbDisplay').innerText); alert('Copied!'); }
 
-    // FUNGSI EXPORT DENGAN SKALA 4 (ULTRA HD)
+    // FUNGSI EXPORT DENGAN SKALA 5 (ULTRA HD) - Tetap Pertahankan Sempurna
     async function exportReport() {
         const btn = document.querySelector('.btn-download');
         btn.innerText = "Processing Ultra HD...";
-        
+
         const canvas = await html2canvas(document.getElementById('reportArea'), { 
-            scale: 4,               // Menaikkan resolusi 4x lipat
+            scale: 5,               // Menaikkan resolusi 5x lipat
             useCORS: true, 
             logging: false,
             backgroundColor: "#ffffff"
         });
-        
+
         const link = document.createElement('a');
         link.download = `SLA_ULTRA_HD_${new Date().getTime()}.jpg`;
         link.href = canvas.toDataURL("image/jpeg", 1.0); // Kualitas JPEG Maksimal (1.0)
         link.click();
-        
+
         btn.innerText = "DOWNLOAD ULTRA HD REPORT (.JPG)";
     }
 </script>

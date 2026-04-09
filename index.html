@@ -349,7 +349,7 @@
         btn.innerText = "Processing Ultra HD...";
 
         const canvas = await html2canvas(document.getElementById('reportArea'), { 
-            scale: 6,               // Menaikkan resolusi 6x lipat
+            scale: 8,               // Menaikkan resolusi 8x lipat
             useCORS: true, 
             logging: false,
             backgroundColor: "#ffffff"
@@ -357,7 +357,7 @@
 
         const link = document.createElement('a');
         link.download = `SLA_ULTRA_HD_${new Date().getTime()}.jpg`;
-        link.href = canvas.toDataURL("image/jpeg", 1.3); // Kualitas JPEG Maksimal (1.5)
+        link.href = canvas.toDataURL("image/jpeg", 2.0); // Kualitas JPEG Maksimal (2.0)
         link.click();
 
         btn.innerText = "DOWNLOAD ULTRA HD X5 (.JPG)";

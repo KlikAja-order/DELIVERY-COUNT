@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SLA Executive Analytics - Ultra HD Version</title>
+    <title>SLA Executive Analytics - Ultra HD Dual Mode</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
@@ -12,15 +12,16 @@
             --navy: #0f172a;
             --blue-accent: #2563eb;
             --border: #cbd5e1;
-            /* Border luar tabel & elemen utama dibuat lebih tebal & gelap */
             --border-heavy: #1e293b; 
             --bar-color: rgba(37, 99, 235, 0.15);
-            /* Variabel untuk radius sudut tumpul */
             --radius-md: 8px;
             --radius-lg: 12px;
+            /* Tab 2 Colors */
+            --teal-dark: #0d9488;
+            --teal-accent: #0f766e;
+            --teal-bar: rgba(13, 148, 136, 0.15);
         }
 
-        /* Menajamkan Font untuk Render Gambar */
         * { 
             -webkit-font-smoothing: antialiased; 
             -moz-osx-font-smoothing: grayscale; 
@@ -30,184 +31,218 @@
 
         body { font-family: 'Inter', sans-serif; background-color: #f1f5f9; margin: 0; padding: 20px; color: var(--navy); }
 
+        /* Tab System */
+        .tab-container { display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 2px solid var(--border); padding-bottom: 10px; }
+        .tab-button { padding: 12px 25px; border: none; background: #e2e8f0; border-radius: var(--radius-md); font-weight: 800; cursor: pointer; color: #64748b; transition: all 0.3s; }
+        .tab-button.active { background: var(--navy); color: white; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
         .controls { background: white; padding: 20px; border-radius: var(--radius-md); border: 1px solid var(--border); margin-bottom: 20px; }
         .chip-group { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 15px; }
         .chip { padding: 6px 14px; border-radius: 4px; border: 1px solid var(--border); background: #fff; font-size: 11px; font-weight: 700; cursor: pointer; }
         .chip.active { background: var(--navy); color: white; border-color: var(--navy); }
 
-        /* AREA REPORT (ULTRA HD CONTAINER) */
-        #reportArea { 
+        .report-area { 
             background: white; 
-            padding: 50px; 
-            /* Sudut tumpul pada container utama */
+            padding: 40px; 
             border-radius: var(--radius-lg); 
             width: fit-content; 
             border: 1px solid #e2e8f0;
             box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
         }
+
+        /* Mode Khusus Tab 2 */
+        .theme-teal .report-header { border-bottom: 4px solid var(--teal-dark); }
+        .theme-teal .ss-identity { color: var(--teal-dark); }
+        .theme-teal .analysis-section-title { border-left-color: var(--teal-dark); color: var(--teal-dark); }
+        .theme-teal table { border-color: #134e4a; }
+        .theme-teal th { background: var(--teal-dark); border-bottom-color: #134e4a; }
+        .theme-teal .zone-label { color: var(--teal-accent); }
+        .theme-teal .bar-visual { background: var(--teal-bar); }
+        .theme-teal .grand-total-row { background: var(--teal-dark) !important; }
+        .theme-teal .top-card strong { color: var(--teal-dark); }
+        .theme-teal .value-text { color: #134e4a; }
 
         .report-header { margin-bottom: 30px; border-bottom: 4px solid var(--navy); padding-bottom: 15px; }
         .report-header h1 { margin: 0; font-size: 32px; font-weight: 800; letter-spacing: -1px; }
+        .report-header .sub-title { font-weight: 700; color: #64748b; font-size: 16px; margin-top: 5px; }
+        .report-header .ss-identity { font-weight: 800; color: var(--blue-accent); font-size: 18px; text-transform: uppercase; margin-top: 2px; }
 
-        /* --- UPDATE TABEL: BORDER LEBIH KELIATAN & SUDUT TUMPUL --- */
-        table { 
-            border-collapse: separate; /* Mengubah ke separate agar border-radius berfungsi */
-            border-spacing: 0;
-            width: auto; 
-            /* Border luar tabel dibuat sangat tebal (4px) */
-            border: 4px solid var(--border-heavy); 
-            margin-bottom: 35px; 
-            background: white; 
-            /* Sudut tumpul tabel */
-            border-radius: var(--radius-lg); 
-            overflow: hidden; /* Memastikan isi tabel mengikuti sudut tumpul */
-        }
+        .main-layout-wrapper { display: flex; align-items: flex-start; gap: 30px; margin-bottom: 35px; }
 
-        /* HEADER BESAR, TAJAM, & BORDER TEGAS */
-        th { 
-            background: var(--navy); 
-            color: white; 
-            padding: 22px 30px; 
-            font-size: 18px; 
-            font-weight: 800; 
-            text-transform: uppercase; 
-            /* Border antar header dipertegas (2px) */
-            border-right: 2px solid rgba(255,255,255,0.15); 
-            border-bottom: 2px solid var(--border-heavy);
-            letter-spacing: 1px;
-        }
-        
-        /* Menghilangkan border kanan pada th terakhir */
+        table { border-collapse: separate; border-spacing: 0; border: 4px solid var(--border-heavy); background: white; border-radius: var(--radius-lg); overflow: hidden; }
+        th { background: var(--navy); color: white; padding: 18px 25px; font-size: 16px; font-weight: 800; text-transform: uppercase; border-right: 2px solid rgba(255,255,255,0.15); border-bottom: 2px solid var(--border-heavy); letter-spacing: 1px; }
         th:last-child { border-right: none; }
+        #subHeader th, .subHeader th { background: #f1f5f9; color: #334155; border-right: 1px solid var(--border); border-bottom: 2px solid var(--border-heavy); font-size: 13px; padding: 10px; font-weight: 700; }
 
-        #subHeader th { 
-            background: #f1f5f9; 
-            color: #334155; 
-            border-right: 1px solid var(--border); 
-            border-bottom: 2px solid var(--border-heavy);
-            font-size: 15px; 
-            padding: 12px;
-            font-weight: 700;
-        }
-
-        td { 
-            border-right: 1px solid var(--border); 
-            border-bottom: 1px solid var(--border); 
-            min-width: 100px; 
-            height: 55px; 
-            position: relative; 
-            cursor: pointer; 
-        }
-
+        td { border-right: 1px solid var(--border); border-bottom: 1px solid var(--border); min-width: 80px; height: 45px; position: relative; cursor: pointer; }
         .cell-wrapper { position: relative; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
         .bar-visual { position: absolute; top: 0; left: 0; bottom: 0; z-index: 1; background: var(--bar-color); }
-        .value-text { position: relative; z-index: 10; font-size: 16px; font-weight: 800; color: var(--navy); }
+        .value-text { position: relative; z-index: 10; font-size: 14px; font-weight: 800; color: var(--navy); }
 
-        .zone-label { 
-            text-align: left !important; 
-            background: #fff !important; 
-            padding: 0 25px !important; 
-            font-weight: 800; 
-            color: var(--blue-accent); 
-            /* Border pemisah kolom Zone dipertebal (3px) */
-            border-right: 3px solid var(--border-heavy) !important; 
-            min-width: 200px; 
-            font-size: 15px; 
-        }
-        
-        .total-cell { 
-            background: #f8fafc; 
-            /* Border pemisah kolom Total dipertebal (3px) */
-            border-left: 3px solid var(--border-heavy) !important; 
-        }
+        .zone-label { text-align: left !important; background: #fff !important; padding: 0 20px !important; font-weight: 800; color: var(--blue-accent); border-right: 3px solid var(--border-heavy) !important; min-width: 180px; font-size: 14px; }
+        .total-cell { background: #f8fafc; border-left: 3px solid var(--border-heavy) !important; }
 
         .grand-total-row { background: var(--navy) !important; color: white !important; }
-        .grand-total-row td { 
-            color: white !important; 
-            font-weight: 800; 
-            text-align: center; 
-            height: 65px; 
-            font-size: 18px; 
-            /* Border pada tfoot dipertebal */
-            border-right: 2px solid rgba(255,255,255,0.15); 
-            border-top: 2px solid var(--border-heavy);
-            border-bottom: none;
-        }
-        .grand-total-row td:last-child { border-right: none; }
+        .grand-total-row td { color: white !important; font-weight: 800; text-align: center; height: 55px; font-size: 16px; border-right: 2px solid rgba(255,255,255,0.15); border-top: 2px solid var(--border-heavy); border-bottom: none; cursor: pointer; }
 
-        /* FOOTER ANALYSIS */
-        .footer-analysis { margin-top: 40px; display: flex; flex-direction: column; gap: 25px; width: 100%; }
+        .right-sidebar { width: 450px; display: flex; flex-direction: column; gap: 25px; }
+        .district-table { width: 100%; margin-top: 0; }
+        .district-table th { padding: 15px; font-size: 14px; }
+        .district-table td { padding: 10px 15px; font-size: 13px; }
+        .district-table .district-total-val { font-size: 26px !important; }
+        .zone-list { display: block; font-size: 10px; color: #64748b; font-weight: 500; margin-top: 2px; text-transform: uppercase; }
+
+        .footer-analysis { margin-top: 10px; display: flex; flex-direction: column; gap: 20px; width: 100%; }
         .analysis-section-title { font-weight: 800; font-size: 16px; text-transform: uppercase; color: var(--navy); border-left: 6px solid var(--blue-accent); padding-left: 12px; margin-bottom: 15px; }
         
-        .top-zones-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
+        .top-zones-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+        .top-card { padding: 12px; border: 2px solid var(--border-heavy); border-radius: var(--radius-md); background: #f8fafc; }
+        .top-card strong { font-size: 13px; color: var(--blue-accent); display: block; margin: 2px 0; }
         
-        /* UPDATE KARTU: BORDER LEBIH TEBAL & SUDUT TUMPUL */
-        .top-card { 
-            padding: 18px; 
-            border: 2px solid var(--border-heavy); /* Border dipertebal & digelapkan */
-            border-radius: var(--radius-md); /* Sudut tumpul */
-            background: #f8fafc; 
-        }
-        .top-card strong { font-size: 15px; color: var(--blue-accent); display: block; margin: 4px 0; }
-        
-        /* UPDATE LEGEND: BORDER LEBIH TEBAL & SUDUT TUMPUL */
-        .legend-grid { 
-            display: grid; 
-            grid-template-columns: repeat(2, 1fr); 
-            gap: 8px; 
-            background: #fff; 
-            padding: 20px; 
-            border: 2px solid var(--border-heavy); /* Border dipertebal & digelapkan */
-            border-radius: var(--radius-md); /* Sudut tumpul */
-        }
-        .legend-item { font-size: 13px; color: #1e293b; line-height: 1.5; }
+        .legend-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; background: #fff; padding: 15px; border: 2px solid var(--border-heavy); border-radius: var(--radius-md); width: 100%; }
+        .legend-item { font-size: 12px; color: #1e293b; line-height: 1.4; }
 
-        /* MODAL */
+        .cell-highlight-high { background-color: #dc2626 !important; }
+        .cell-highlight-mid-high { background-color: #f97316 !important; }
+        .cell-highlight-mid { background-color: #fde047 !important; }
+        .cell-highlight-mid-low { background-color: #a3e635 !important; }
+        .cell-highlight-low { background-color: #22c55e !important; }
+        .cell-highlight-zero { background-color: #10b981 !important; }
+        
         #awbModal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); align-items: center; justify-content: center; }
-        .modal-content { background: white; padding: 30px; border-radius: var(--radius-lg); width: 500px; max-height: 80vh; overflow-y: auto; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); }
+        .modal-content { background: white; padding: 30px; border-radius: var(--radius-lg); width: 500px; max-height: 80vh; overflow-y: auto; }
 
-        .btn-download { position: fixed; bottom: 30px; right: 30px; background: var(--blue-accent); color: white; padding: 18px 35px; border-radius: var(--radius-lg); border: none; font-weight: 800; cursor: pointer; box-shadow: 0 10px 30px rgba(37, 99, 235, 0.4); z-index: 100; font-size: 14px; transition: 0.3s; }
-        .btn-download:hover { transform: translateY(-3px); background: var(--navy); }
+        .btn-download { position: fixed; bottom: 30px; right: 30px; background: var(--blue-accent); color: white; padding: 18px 35px; border-radius: var(--radius-lg); border: none; font-weight: 800; cursor: pointer; box-shadow: 0 10px 30px rgba(37, 99, 235, 0.4); z-index: 100; font-size: 14px; }
+        .theme-teal .btn-download { background: var(--teal-dark); box-shadow: 0 10px 30px rgba(13, 148, 136, 0.4); }
     </style>
 </head>
 <body>
 
 <div class="controls">
     <div style="font-weight: 800; font-size: 20px; color: var(--navy);">SLA PERFORMANCE <span style="color: var(--blue-accent)">BLHR00</span></div>
-    <p style="font-size: 13px; color: #64748b; margin: 5px 0 15px;">Operational Dashboard High-Definition</p>
+    <p style="font-size: 13px; color: #64748b; margin: 5px 0 15px;">Operational Dashboard High-Definition • Dual Perspective Mode</p>
     <input type="file" id="csvFile" accept=".csv">
     <div id="chipContainer" class="chip-group"></div>
 </div>
 
-<div id="reportArea">
-    <div class="report-header">
-        <h1>DELIVERY PERFORMANCE REPORT</h1>
-        <p id="reportTimestamp" style="font-weight:700; color:#64748b; font-size: 14px;"></p>
-    </div>
+<div class="tab-container">
+    <button class="tab-button active" onclick="switchTab('tab1', this)">MONITORING SLA SUMMARY</button>
+    <button class="tab-button" onclick="switchTab('tab2', this)">DAILY INPROGRESS DELIVERY</button>
+</div>
 
-    <table>
-        <thead>
-            <tr>
-                <th rowspan="2">UNIT ZONE</th>
-                <th id="opTitle">LAST OP CODE</th>
-                <th rowspan="2">TOTAL AWB</th>
-            </tr>
-            <tr id="subHeader"></tr>
-        </thead>
-        <tbody id="tableBody"></tbody>
-        <tfoot id="tableFoot"></tfoot>
-    </table>
-
-    <div class="footer-analysis">
-        <div>
-            <div class="analysis-section-title">Top Performance Analysis</div>
-            <div id="topZonesContainer" class="top-zones-grid"></div>
+<div id="tab1" class="tab-content active">
+    <div class="report-area" id="reportArea1">
+        <div class="report-header">
+            <h1>DELIVERY SLA SUMMARY MONITORING</h1>
+            <div class="sub-title reportTimestamp"></div>
+            <div class="ss-identity">Staging Store BLHR00</div>
         </div>
-        <div>
-            <div class="analysis-section-title">Op Code Dictionary (Keterangan)</div>
-            <div id="legendContainer" class="legend-grid"></div>
+
+        <div class="main-layout-wrapper">
+            <div style="flex: 1;">
+                <div class="analysis-section-title">Delivery SLA Summary Monitoring</div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th rowspan="2">UNIT ZONE</th>
+                            <th class="opTitle" colspan="1">LAST OP CODE</th>
+                            <th rowspan="2">TOTAL AWB</th>
+                        </tr>
+                        <tr class="subHeader"></tr>
+                    </thead>
+                    <tbody class="tableBody"></tbody>
+                    <tfoot class="tableFoot"></tfoot>
+                </table>
+            </div>
+
+            <div class="right-sidebar">
+                <div>
+                    <div class="analysis-section-title">Rekapitulasi per Kecamatan</div>
+                    <table class="district-table">
+                        <thead>
+                            <tr>
+                                <th>No</th>
+                                <th>Kecamatan & Zone</th>
+                                <th>Total AWB</th>
+                            </tr>
+                        </thead>
+                        <tbody class="districtTableBody"></tbody>
+                    </table>
+                </div>
+                <div>
+                    <div class="analysis-section-title">Top Pending Terbanyak</div>
+                    <div class="topZonesContainer top-zones-grid"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer-analysis">
+            <div>
+                <div class="analysis-section-title">Op Code Dictionary (Keterangan)</div>
+                <div class="legendContainer legend-grid"></div>
+            </div>
         </div>
     </div>
+    <button class="btn-download" onclick="exportReport('reportArea1', 'SLA_SUMMARY')">DOWNLOAD TAB 1 (.JPG)</button>
+</div>
+
+<div id="tab2" class="tab-content">
+    <div class="report-area theme-teal" id="reportArea2">
+        <div class="report-header">
+            <h1>DAILY INPROGRESS DELIVERY</h1>
+            <div class="sub-title reportTimestamp"></div>
+            <div class="ss-identity">Staging Store BLHR00</div>
+        </div>
+
+        <div class="main-layout-wrapper">
+            <div style="flex: 1;">
+                <div class="analysis-section-title">Daily Inprogress Monitoring</div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th rowspan="2">UNIT ZONE</th>
+                            <th class="opTitle" colspan="1">LAST OP CODE</th>
+                            <th rowspan="2">TOTAL AWB</th>
+                        </tr>
+                        <tr class="subHeader"></tr>
+                    </thead>
+                    <tbody class="tableBody"></tbody>
+                    <tfoot class="tableFoot"></tfoot>
+                </table>
+            </div>
+
+            <div class="right-sidebar">
+                <div>
+                    <div class="analysis-section-title">Rekapitulasi per Kecamatan</div>
+                    <table class="district-table">
+                        <thead>
+                            <tr>
+                                <th>No</th>
+                                <th>Kecamatan & Zone</th>
+                                <th>Total AWB</th>
+                            </tr>
+                        </thead>
+                        <tbody class="districtTableBody"></tbody>
+                    </table>
+                </div>
+                <div>
+                    <div class="analysis-section-title">Top Performance Analysis</div>
+                    <div class="topZonesContainer top-zones-grid"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer-analysis">
+            <div>
+                <div class="analysis-section-title">Op Code Dictionary (Keterangan)</div>
+                <div class="legendContainer legend-grid"></div>
+            </div>
+        </div>
+    </div>
+    <button class="btn-download" onclick="exportReport('reportArea2', 'DAILY_INPROGRESS')">DOWNLOAD TAB 2 (.JPG)</button>
 </div>
 
 <div id="awbModal">
@@ -219,8 +254,6 @@
         <button onclick="closeModal()" style="width:100%; padding:10px; background:#f1f5f9; border:none; border-radius:var(--radius-md); margin-top:8px; cursor:pointer; font-weight:600;">Close</button>
     </div>
 </div>
-
-<button class="btn-download" onclick="exportReport()">DOWNLOAD ULTRA HD REPORT (.JPG)</button>
 
 <script>
     const OP_MAP = {
@@ -244,10 +277,34 @@
         "210": "Claim Delivery (Satria Non COD)", "201": "Request order to external logistic", "96": "Order Non Request Pickup"
     };
 
+    const DISTRICT_MAP = {
+        "Gedangsari": ["JOG-NGL00"], "Karangmojo": ["JOG-BDN00", "JOG-BJH00"], "Ngawen": ["JOG-WSG00"],
+        "Nglipar": ["JOG-KKR00", "JOG-KPH00", "JOG-KTG00"], "Paliyan": ["JOG-KRD00", "JOG-KRD01"], "Panggang": ["JOG-GHJ00"],
+        "Patuk": ["JOG-SMY00"], "Playen": ["JOG-BLB00", "JOG-NGN00", "JOG-PLB00"], "Ponjong": ["JOG-GBG00", "JOG-PNJ00", "JOG-SWH00"],
+        "Purwosari": ["JOG-GJT00"], "Saptosari": ["JOG-KBW00"], "Semanu": ["JOG-CRJ00", "JOG-PCJ00", "JOG-SMN00"],
+        "Tanjungsari": ["JOG-KMD00"], "Tepus": ["JOG-SRJ00"], "Wonosari": ["JOG-BLH00", "JOG-DWT00", "JOG-WNG00"]
+    };
+
     let rawData = [];
     let kZ, kO, kA;
 
-    document.getElementById('reportTimestamp').innerText = `Report Date: ${new Date().toLocaleDateString('id-ID', {day:'numeric', month:'long', year:'numeric'})} • SS BLHR0`;
+    function switchTab(tabId, btn) {
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+        document.querySelectorAll('.tab-button').forEach(b => b.classList.remove('active'));
+        document.getElementById(tabId).classList.add('active');
+        btn.classList.add('active');
+    }
+
+    function updateTimestamp() {
+        const now = new Date();
+        const days = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
+        const dayName = days[now.getDay()];
+        const dateStr = now.toLocaleDateString('id-ID', {day:'numeric', month:'long', year:'numeric'});
+        document.querySelectorAll('.reportTimestamp').forEach(el => {
+            el.innerText = `${dayName}, ${dateStr}`;
+        });
+    }
+    updateTimestamp();
 
     document.getElementById('csvFile').addEventListener('change', function(e) {
         Papa.parse(e.target.files[0], {
@@ -272,6 +329,7 @@
         const activeOps = Array.from(document.querySelectorAll('.chip.active')).map(c => c.innerText);
         const pivot = {};
         const colTotals = {};
+        const colAwbs = {};
         const topZones = {};
 
         rawData.forEach(r => {
@@ -282,85 +340,119 @@
                 pivot[z].ops[o]++;
                 pivot[z].awbs[o].push(awb);
                 pivot[z].total++;
+
                 colTotals[o] = (colTotals[o] || 0) + 1;
+                if(!colAwbs[o]) colAwbs[o] = [];
+                colAwbs[o].push(awb);
+
                 if(!topZones[o] || pivot[z].ops[o] > topZones[o].val) topZones[o] = { zone: z, val: pivot[z].ops[o] };
             }
         });
-        render(pivot, activeOps, colTotals, topZones);
+        
+        // Render ke dua tab secara bersamaan
+        syncRender('.tableBody', '.tableFoot', '.subHeader', '.opTitle', '.districtTableBody', '.topZonesContainer', '.legendContainer', pivot, activeOps, colTotals, topZones, colAwbs);
     }
 
-    function render(pivot, ops, colTotals, topZones) {
-        const zones = Object.keys(pivot).sort();
-        document.getElementById('opTitle').colSpan = ops.length;
-        document.getElementById('subHeader').innerHTML = ops.map(o => `<th>${o}</th>`).join('');
+    function getCellHighlightClass(value, maxVal) {
+        if (maxVal === 0 || value === 0) return 'cell-highlight-zero';
+        const ratio = value / maxVal;
+        if (ratio <= 0.1) return 'cell-highlight-low';
+        if (ratio <= 0.3) return 'cell-highlight-mid-low';
+        if (ratio <= 0.6) return 'cell-highlight-mid';
+        if (ratio <= 0.85) return 'cell-highlight-mid-high';
+        return 'cell-highlight-high';
+    }
 
+    function syncRender(bodyClass, footClass, subClass, titleClass, distClass, topClass, legClass, pivot, ops, colTotals, topZones, colAwbs) {
+        const zones = Object.keys(pivot).sort();
         const colMax = {};
         ops.forEach(op => colMax[op] = Math.max(...zones.map(z => pivot[z].ops[op] || 0)));
         const grandMax = Math.max(...zones.map(z => pivot[z].total));
 
-        document.getElementById('tableBody').innerHTML = zones.map(z => {
+        // Update Headers
+        document.querySelectorAll(titleClass).forEach(el => el.colSpan = ops.length);
+        document.querySelectorAll(subClass).forEach(el => {
+            el.innerHTML = ops.map(o => `<th>${o}</th>`).join('');
+        });
+
+        // Generate Rows
+        let rowHtml = zones.map(z => {
             const row = pivot[z];
             let html = `<tr><td class="zone-label">${z}</td>`;
             ops.forEach(op => {
                 const val = row.ops[op] || 0;
                 const percent = colMax[op] > 0 ? (val / colMax[op] * 100) : 0;
-                html += `<td onclick="showAWB('${z}', '${op}', '${(row.awbs[op] || []).join(', ')}')">
+                let cellClass = op === '204' ? ` class="${getCellHighlightClass(val, colMax['204'])}"` : '';
+                html += `<td${cellClass} onclick="showAWB('${z}', '${op}', '${(row.awbs[op] || []).join(', ')}')">
                     <div class="cell-wrapper"><div class="bar-visual" style="width:${percent}%"></div><span class="value-text">${val}</span></div>
-                </td>`;
+                  </td>`;
             });
             html += `<td class="total-cell" onclick="showAWB('${z}', 'TOTAL', '${Object.values(row.awbs).flat().join(', ')}')">
                 <div class="cell-wrapper"><div class="bar-visual" style="width:${(row.total/grandMax*100)}%; background:rgba(0,0,0,0.08)"></div><span class="value-text">${row.total}</span></div>
-            </td></tr>`;
+              </td></tr>`;
             return html;
         }).join('');
+        document.querySelectorAll(bodyClass).forEach(el => el.innerHTML = rowHtml);
 
-        let grandTotalAll = Object.values(colTotals).reduce((a, b) => a + b, 0);
-        let footerHtml = `<tr class="grand-total-row"><td>GRAND TOTAL</td>`;
-        ops.forEach(op => footerHtml += `<td>${colTotals[op] || 0}</td>`);
-        footerHtml += `<td style="background:#1e293b!important; border-left: 3px solid var(--border-heavy);">${grandTotalAll}</td></tr>`;
-        document.getElementById('tableFoot').innerHTML = footerHtml;
+        // Generate Footer
+        let footHtml = `<tr class="grand-total-row"><td>GRAND TOTAL</td>`;
+        ops.forEach(op => {
+            const currentAwbs = (colAwbs[op] || []).join(', ');
+            footHtml += `<td onclick="showAWB('GRAND TOTAL', '${op}', '${currentAwbs}')">${colTotals[op] || 0}</td>`;
+        });
+        const allGrandAwbs = Object.values(colAwbs).flat().join(', ');
+        footHtml += `<td style="background:rgba(0,0,0,0.3)!important;" onclick="showAWB('GRAND TOTAL', 'TOTAL ALL', '${allGrandAwbs}')">${Object.values(colTotals).reduce((a,b)=>a+b,0)}</td></tr>`;
+        document.querySelectorAll(footClass).forEach(el => el.innerHTML = footHtml);
 
-        document.getElementById('topZonesContainer').innerHTML = ops.map(o => `
+        // District Table
+        const districts = Object.keys(DISTRICT_MAP);
+        const districtTotals = districts.map(district => {
+            let total = 0;
+            DISTRICT_MAP[district].forEach(z => { if (pivot[z]) total += pivot[z].total; });
+            return { name: district, total, zones: DISTRICT_MAP[district].join(', ') };
+        }).sort((a, b) => b.total - a.total);
+
+        let distHtml = districtTotals.map((d, i) => `
+            <tr><td style="text-align:center;">${i+1}</td>
+            <td><strong>${d.name}</strong><span class="zone-list">${d.zones}</span></td>
+            <td class="district-total-val" style="text-align:center; font-weight:800;">${d.total.toLocaleString()}</td></tr>
+        `).join('');
+        document.querySelectorAll(distClass).forEach(el => el.innerHTML = distHtml);
+
+        // Top Cards
+        let topHtml = ops.map(o => `
             <div class="top-card">
                 <small style="font-weight:800; color:#64748b;">TOP ${o}</small>
                 <strong>${topZones[o]?.zone || '-'}</strong>
-                <span style="font-size:11px; font-weight:600;">${topZones[o]?.val || 0} AWB • ${OP_MAP[o] || ''}</span>
+                <span style="font-size:11px; font-weight:600;">${topZones[o]?.val || 0} AWB</span>
             </div>
         `).join('');
+        document.querySelectorAll(topClass).forEach(el => el.innerHTML = topHtml);
 
-        document.getElementById('legendContainer').innerHTML = ops.map(o => `
-            <div class="legend-item"><b>${o}:</b> ${OP_MAP[o] || 'Code Unknown'}</div>
-        `).join('');
+        // Legend
+        let legHtml = ops.map(o => `<div class="legend-item"><b>${o}:</b> ${OP_MAP[o] || 'Unknown'}</div>`).join('');
+        document.querySelectorAll(legClass).forEach(el => el.innerHTML = legHtml);
     }
 
-    function showAWB(zone, op, awbs) {
-        if(!awbs) return;
-        document.getElementById('modalTitle').innerText = `${zone} - [${op}]`;
-        document.getElementById('modalOpDesc').innerText = OP_MAP[op] || 'Operational Status';
-        document.getElementById('awbDisplay').innerText = awbs;
+    function showAWB(z, o, a) {
+        document.getElementById('modalTitle').innerText = `${z} - [${o}]`;
+        document.getElementById('modalOpDesc').innerText = OP_MAP[o] || 'Operational Status';
+        document.getElementById('awbDisplay').innerText = a;
         document.getElementById('awbModal').style.display = 'flex';
     }
     function closeModal() { document.getElementById('awbModal').style.display = 'none'; }
     function copyAWB() { navigator.clipboard.writeText(document.getElementById('awbDisplay').innerText); alert('Copied!'); }
 
-    // FUNGSI EXPORT DENGAN SKALA 5 (ULTRA HD) - Tetap Pertahankan Sempurna
-    async function exportReport() {
-        const btn = document.querySelector('.btn-download');
-        btn.innerText = "Processing Ultra HD...";
-
-        const canvas = await html2canvas(document.getElementById('reportArea'), { 
-            scale: 8,               // Menaikkan resolusi 8x lipat
-            useCORS: true, 
-            logging: false,
-            backgroundColor: "#ffffff"
-        });
-
+    async function exportReport(areaId, fileName) {
+        const btn = event.target;
+        const originalText = btn.innerText;
+        btn.innerText = "Generating Ultra HD...";
+        const canvas = await html2canvas(document.getElementById(areaId), { scale: 3, useCORS: true, backgroundColor: "#ffffff" });
         const link = document.createElement('a');
-        link.download = `SLA_ULTRA_HD_${new Date().getTime()}.jpg`;
-        link.href = canvas.toDataURL("image/jpeg", 2.0); // Kualitas JPEG Maksimal (2.0)
+        link.download = `${fileName}_BLHR00_${new Date().getTime()}.jpg`;
+        link.href = canvas.toDataURL("image/jpeg", 1.0);
         link.click();
-
-        btn.innerText = "DOWNLOAD ULTRA HD X5 (.JPG)";
+        btn.innerText = originalText;
     }
 </script>
 </body>
